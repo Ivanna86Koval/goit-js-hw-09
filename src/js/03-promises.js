@@ -1,11 +1,5 @@
-function createPromise(position, delay) {
-  const shouldResolve = Math.random() > 0.3;
-  if (shouldResolve) {
-    // Fulfill
-  } else {
-    // Reject
-  }
-}
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 document.body.style.backgroundColor = '#f7eff4';
 const form = document.querySelector('form.form');
 const options = {
