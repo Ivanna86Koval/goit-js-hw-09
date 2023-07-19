@@ -36,11 +36,13 @@ const options = {
 };
 
 flatpickr(refs.inputDatetime, options);
+refs.inputDatetime.disabled = false;
 
 function onStart() {
   clearInterval(timerId);
   timerId = setInterval(assignValueTimer, 1000);
   refs.buttonStart.disabled = true;
+  refs.inputDatetime.disabled = true;
 }
 
 function assignValueTimer() {

@@ -1,17 +1,43 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-document.body.style.backgroundColor = '#f7eff4';
-const form = document.querySelector('form.form');
-const options = {
-  position: 'center-bottom',
-  distance: '15px',
-  borderRadius: '15px',
-  timeout: 10000,
-  clickToClose: true,
-  cssAnimationStyle: 'from-right',
-};
+const formPromise = document.querySelector('.form');
 
-form.addEventListener('click', onPromiseCreate);
+formPromise.addEventListener('submit', onFormPromise);
+
+function onFormPromise(evt) {
+  evt.preventDefault();
+
+  const { delay, step, amount } = evt.currentTarget;
+  let inputFormDelay = Number(delay.value);
+  let inputFormStep = Number(step.value);
+  let inputFormAmount = Number(amount.value);
+
+  if (inputFormDelay < 0 || inputFormStep < 0 || inputFormAmount <= 0) {
+    Notify.info('All data must be positive');
+    return;
+  }
+
+  for (let i = 0; i < inputFormAmount; i += 1) {
+    let customDelay = inputFormDelay + i * inputFormStep;
+    createPromise(i + 1, customDelay)
+      .then(({ position, delay }) => {
+        Notify.success(
+          `✅ Fulfilled promise ${position} in ${delay}ms`,
+          options
+        );
+      })
+      .catch(({ position, delay }) => {
+        Notify.failure(
+          `❌ Rejected promise ${position} in ${delay}ms`,
+          options
+        );
+      });
+
+    // inputFormDelay += inputFormStep;
+  }
+
+  evt.currentTarget.reset();
+}
 
 function createPromise(position, delay) {
   return new Promise((resolve, reject) => {
@@ -26,29 +52,7 @@ function createPromise(position, delay) {
   });
 }
 
-function onPromiseCreate(e) {
-  e.preventDefault();
-  const { delay, step, amount } = e.currentTarget.elements;
-  let inputDelay = Number(delay.value);
-  let inputStep = Number(step.value);
-  let inputAmount = Number(amount.value);
-
-  for (let i = 1; i <= inputAmount; i += 1) {
-    inputDelay += inputStep;
-
-    createPromise(i, inputDelay)
-      .then(({ position, delay }) => {
-        Notify.success(
-          `✅ Fulfilled promise ${position} in ${delay}ms`,
-          options
-        );
-      })
-      .catch(({ position, delay }) => {
-        Notify.failure(
-          `❌ Rejected promise ${position} in ${delay}ms`,
-          options
-        );
-      });
-    e.currentTarget.reset();
-  }
-}
+const options = {
+  position: 'right-top',
+  timeout: 3000,
+};
